@@ -69,4 +69,4 @@ src/
 
 ---
 
-© 2025 Topnotch Tech Innovations Ltd. All rights reserved.
+© 2026 Topnotch Tech Innovations Ltd. All rights reserved.
