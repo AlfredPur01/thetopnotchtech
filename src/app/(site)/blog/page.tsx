@@ -1,0 +1,55 @@
+import { BlogHero } from "@/components/blog/BlogHero";
+import { TopicCategories } from "@/components/blog/TopicCategories";
+import { FeaturedArticle } from "@/components/blog/FeaturedArticle";
+import { ArticleCard } from "@/components/blog/ArticleCard";
+import { BlogSidebar } from "@/components/blog/BlogSidebar";
+import { BlogNewsletterBanner } from "@/components/blog/BlogNewsletterBanner";
+import { BLOG_POSTS } from "@/lib/blog";
+
+const LATEST_ARTICLE_SLUGS = [
+  "how-to-build-a-scalable-software-product-from-scratch",
+  "branding-essentials-for-startups-what-really-matters",
+  "seo-for-small-businesses-simple-techniques-that-work",
+  "why-every-business-needs-a-strong-digital-footprint",
+];
+
+export default function BlogPage() {
+  const featuredPost = BLOG_POSTS.find((post) => post.featured);
+  const latestArticles = BLOG_POSTS.filter((post) => LATEST_ARTICLE_SLUGS.includes(post.slug));
+
+  return (
+    <main>
+      <BlogHero />
+      <TopicCategories />
+      {featuredPost && <FeaturedArticle post={featuredPost} />}
+
+      <section id="latest-articles" className="bg-brand-light py-16 md:py-24">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 sm:px-6 lg:grid-cols-[2fr_1fr] lg:px-8">
+          <div>
+            <h2 className="font-display text-2xl font-semibold text-brand-blue sm:text-3xl">
+              Latest Articles
+            </h2>
+            <div className="mt-8 space-y-6">
+              {latestArticles.map((post) => (
+                <ArticleCard
+                  key={post.slug}
+                  slug={post.slug}
+                  image={post.image}
+                  category={post.category}
+                  title={post.title}
+                  excerpt={post.excerpt}
+                  date={post.date}
+                  readTime={post.readTime}
+                />
+              ))}
+            </div>
+          </div>
+
+          <BlogSidebar />
+        </div>
+      </section>
+
+      <BlogNewsletterBanner />
+    </main>
+  );
+}
