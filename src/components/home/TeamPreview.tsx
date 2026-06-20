@@ -16,27 +16,27 @@ interface TeamMember {
 
 const TEAM_MEMBERS: TeamMember[] = [
   {
-    name: "Emeka Okafor",
-    role: "CEO & Founder",
-    photo: "/images/team/emeka-okafor.jpg",
+    name: "Ejidokun Moses Oluwaseun",
+    role: "CEO & Co-founder",
+    photo: "/images/team/moses-oluwaseun.jpg",
     linkedin: "https://linkedin.com",
   },
   {
-    name: "Adesze Nwosu",
-    role: "Lead Developer",
-    photo: "/images/team/adesze-nwosu.jpg",
+    name: "Alfred Ayilara Pur",
+    role: "COO & Co-founder",
+    photo: "/images/team/alfred-ayilara-pur.JPG",
     linkedin: "https://linkedin.com",
   },
   {
-    name: "Ibrahim Bello",
-    role: "UI/UX Designer",
-    photo: "/images/team/ibrahim-bello.jpg",
+    name: "Patrick Chukwuemeka Okino",
+    role: "CTO",
+    photo: "/images/team/patrick-okino.jpg",
     linkedin: "https://linkedin.com",
   },
   {
-    name: "Chiamaka Eze",
-    role: "Marketing Strategist",
-    photo: "/images/team/chiamaka-eze.jpg",
+    name: "Bakare Oluwaseun Victoria",
+    role: "CCO",
+    photo: "/images/team/bakare-oluwaseun-victoria.jpg",
     linkedin: "https://linkedin.com",
   },
 ];

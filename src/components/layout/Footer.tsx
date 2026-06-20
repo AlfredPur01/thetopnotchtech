@@ -106,10 +106,10 @@ export function Footer() {
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-sm text-gray-400 sm:flex-row">
           <p>&copy; {new Date().getFullYear()} Topnotch Tech Innovations Ltd. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <Link href="/privacy-policy" className="hover:text-white">
+            <Link href="/privacy" className="hover:text-white">
               Privacy Policy
             </Link>
-            <Link href="/terms-of-service" className="hover:text-white">
+            <Link href="/terms" className="hover:text-white">
               Terms of Service
             </Link>
           </div>

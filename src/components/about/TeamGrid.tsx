@@ -41,9 +41,17 @@ const TEAM_MEMBERS: TeamMember[] = [
     linkedin: "https://linkedin.com",
     twitter: "https://twitter.com",
   },
+  {
+    name: "Bakare Oluwaseun Victoria",
+    role: "CCO",
+    bio: "Responsible for an organization's overall creative direction, brand identity, and artistic strategy",
+    photo: "/images/team/bakare-oluwaseun-victoria.jpg",
+    linkedin: "https://linkedin.com",
+    twitter: "https://twitter.com",
+  },
 ];
 
-const COMING_SOON_SLOTS = 3;
+const COMING_SOON_SLOTS = 2;
 
 export function TeamGrid() {
   return (
