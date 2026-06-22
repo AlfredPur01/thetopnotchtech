@@ -2,64 +2,12 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { CourseCard, type CourseCardProps } from "@/components/elearning/CourseCard";
+import { CourseCard } from "@/components/elearning/CourseCard";
+import { COURSES } from "@/lib/courses";
+import { getInstructorBySlug } from "@/lib/instructors";
 import { fadeUp, staggerContainer } from "@/styles/animations";
 
-const POPULAR_COURSES: CourseCardProps[] = [
-  {
-    badge: "Bestseller",
-    image: "/images/elearning/digital-marketing-masterclass.jpg",
-    title: "Digital Marketing Masterclass",
-    description: "Learn strategies to grow brands, generate leads and boost sales.",
-    instructor: "David Okoro",
-    instructorAvatar: "/images/team/instructor-david-okoro.jpg",
-    rating: 4.8,
-    reviews: 1200,
-    price: 25000,
-  },
-  {
-    badge: "Popular",
-    image: "/images/elearning/full-stack-web-development.jpg",
-    title: "Full Stack Web Development",
-    description: "Build modern websites and web apps from scratch.",
-    instructor: "Jane Doe",
-    instructorAvatar: "/images/team/instructor-jane-doe.jpg",
-    rating: 4.7,
-    reviews: 980,
-    price: 35000,
-  },
-  {
-    badge: "Trending",
-    image: "/images/elearning/ui-ux-design-fundamentals.jpg",
-    title: "UI/UX Design Fundamentals",
-    description: "Design beautiful, user-friendly interfaces and experiences.",
-    instructor: "Patrick U.",
-    instructorAvatar: "/images/team/instructor-patrick-u.jpg",
-    rating: 4.6,
-    reviews: 756,
-    price: 20000,
-  },
-  {
-    image: "/images/elearning/python-for-beginners.jpg",
-    title: "Python for Beginners",
-    description: "Master Python programming from the ground up.",
-    instructor: "Chinedu A.",
-    instructorAvatar: "/images/team/instructor-chinedu-a.jpg",
-    rating: 4.9,
-    reviews: 1100,
-    price: 18000,
-  },
-  {
-    image: "/images/elearning/mobile-app-development.jpg",
-    title: "Mobile App Development",
-    description: "Build and publish apps for Android & iOS.",
-    instructor: "Fevi D.",
-    instructorAvatar: "/images/team/instructor-fevi-d.jpg",
-    rating: 4.6,
-    reviews: 640,
-    price: 30000,
-  },
-];
+const FEATURED_COURSES = COURSES.filter((course) => course.featured);
 
 export function PopularCourses() {
   return (
@@ -87,9 +35,25 @@ export function PopularCourses() {
           variants={staggerContainer}
           className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5"
         >
-          {POPULAR_COURSES.map((course) => (
-            <CourseCard key={course.title} {...course} />
-          ))}
+          {FEATURED_COURSES.map((course) => {
+            const instructor = getInstructorBySlug(course.instructorSlug);
+            if (!instructor) return null;
+
+            return (
+              <CourseCard
+                key={course.slug}
+                badge={course.badge}
+                image={course.image}
+                title={course.title}
+                description={course.description}
+                instructor={instructor.name}
+                instructorAvatar={instructor.avatar}
+                rating={course.rating}
+                reviews={course.reviews}
+                price={course.price}
+              />
+            );
+          })}
         </motion.div>
       </div>
     </section>

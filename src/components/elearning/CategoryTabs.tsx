@@ -1,23 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { BarChart3, Briefcase, Code2, Megaphone, Monitor, Palette, type LucideIcon } from "lucide-react";
+import { COURSE_CATEGORIES, getCourseCountByCategory, type CourseCategory } from "@/lib/courses";
 import { fadeUp, staggerContainer } from "@/styles/animations";
 
-interface Category {
-  icon: LucideIcon;
-  title: string;
-  count: number;
-}
-
-const CATEGORIES: Category[] = [
-  { icon: Code2, title: "Development", count: 32 },
-  { icon: Palette, title: "Design", count: 18 },
-  { icon: Megaphone, title: "Marketing", count: 22 },
-  { icon: Briefcase, title: "Business", count: 15 },
-  { icon: BarChart3, title: "Data Science", count: 20 },
-  { icon: Monitor, title: "IT & Software", count: 16 },
-];
+const CATEGORY_ICONS: Record<CourseCategory, LucideIcon> = {
+  Development: Code2,
+  Design: Palette,
+  Marketing: Megaphone,
+  Business: Briefcase,
+  "Data Science": BarChart3,
+  "IT & Software": Monitor,
+};
 
 export function CategoryTabs() {
   return (
@@ -40,19 +36,25 @@ export function CategoryTabs() {
           variants={staggerContainer}
           className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6"
         >
-          {CATEGORIES.map(({ icon: Icon, title, count }) => (
-            <motion.div
-              key={title}
-              variants={fadeUp}
-              className="flex flex-col items-center gap-2 rounded-xl border border-gray-200 p-4 text-center"
-            >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue/10 text-brand-blue">
-                <Icon size={18} />
-              </span>
-              <p className="font-display text-sm font-semibold text-brand-blue">{title}</p>
-              <p className="text-xs text-brand-muted">{count} Courses</p>
-            </motion.div>
-          ))}
+          {COURSE_CATEGORIES.map((category) => {
+            const Icon = CATEGORY_ICONS[category];
+            return (
+              <motion.div key={category} variants={fadeUp}>
+                <Link
+                  href={`/e-learning/courses?category=${encodeURIComponent(category)}`}
+                  className="flex flex-col items-center gap-2 rounded-xl border border-gray-200 p-4 text-center transition-colors duration-200 hover:border-brand-blue"
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue/10 text-brand-blue">
+                    <Icon size={18} />
+                  </span>
+                  <p className="font-display text-sm font-semibold text-brand-blue">{category}</p>
+                  <p className="text-xs text-brand-muted">
+                    {getCourseCountByCategory(category)} Courses
+                  </p>
+                </Link>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>
