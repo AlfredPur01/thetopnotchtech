@@ -4,30 +4,10 @@ import { ContactForm } from "@/components/contact/ContactForm";
 import { ContactWhyChooseUs } from "@/components/contact/ContactWhyChooseUs";
 import { WhatHappensNext } from "@/components/contact/WhatHappensNext";
 import { OfficeMap } from "@/components/contact/OfficeMap";
-import { TestimonialsGrid, type Testimonial } from "@/components/ui/TestimonialsGrid";
+import { TestimonialsGrid } from "@/components/ui/TestimonialsGrid";
 import { FAQAccordion, type FAQItem } from "@/components/ui/FAQAccordion";
 import { CTABanner } from "@/components/ui/CTABanner";
-
-const CONTACT_TESTIMONIALS: Testimonial[] = [
-  {
-    quote: "Topnotch Tech helped us build a stunning website that increased our conversions by 300%.",
-    name: "Adetola Adeyemi",
-    role: "CEO, GreenMart",
-    avatar: "/images/team/testimonial-adetola.jpg",
-  },
-  {
-    quote: "Their team is professional, responsive, and truly understands business goals.",
-    name: "James Okafor",
-    role: "Founder, PoyWise",
-    avatar: "/images/team/testimonial-james.jpg",
-  },
-  {
-    quote: "From branding to development, they delivered beyond our expectations.",
-    name: "Chioma Nwosu",
-    role: "MD, EduBridge",
-    avatar: "/images/team/testimonial-chioma.jpg",
-  },
-];
+import { getTestimonialsByPlacement } from "@/lib/testimonials";
 
 const CONTACT_FAQ_ITEMS: FAQItem[] = [
   {
@@ -52,7 +32,11 @@ const CONTACT_FAQ_ITEMS: FAQItem[] = [
   },
 ];
 
-export default function ContactPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ContactPage() {
+  const testimonials = await getTestimonialsByPlacement("contact");
+
   return (
     <main>
       <ContactHero />
@@ -66,7 +50,7 @@ export default function ContactPage() {
       </section>
 
       <WhatHappensNext />
-      <TestimonialsGrid id="testimonials" heading="What Our Clients Say" testimonials={CONTACT_TESTIMONIALS} />
+      <TestimonialsGrid id="testimonials" heading="What Our Clients Say" testimonials={testimonials} />
       <FAQAccordion id="faq" heading="Frequently Asked Questions" items={CONTACT_FAQ_ITEMS} />
       <OfficeMap />
 

@@ -5,18 +5,16 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Play } from "lucide-react";
 import { BLUR_DATA_URL } from "@/lib/utils";
-import { BLOG_POSTS } from "@/lib/blog";
+import type { BlogPost } from "@/lib/blog";
 import { slideInLeft, slideInRight } from "@/styles/animations";
 
-const INSIGHT_SLUGS = [
-  "how-ai-is-transforming-digital-marketing-for-smes",
-  "top-7-website-trends-to-watch-in-2025",
-  "5-digital-marketing-mistakes-that-cost-you-customers",
-];
+interface LatestInsightsProps {
+  posts: BlogPost[];
+}
 
-const INSIGHT_POSTS = BLOG_POSTS.filter((post) => INSIGHT_SLUGS.includes(post.slug));
+export function LatestInsights({ posts }: LatestInsightsProps) {
+  const insightPosts = posts.slice(0, 3);
 
-export function LatestInsights() {
   return (
     <section id="latest-insights" className="bg-brand-light py-16 md:py-24">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
@@ -35,37 +33,43 @@ export function LatestInsights() {
             </Link>
           </div>
 
-          <div className="mt-8 space-y-6">
-            {INSIGHT_POSTS.map((post) => (
-              <Link
-                key={post.slug}
-                href={`/blog/${post.slug}`}
-                className="flex items-center gap-4 rounded-xl bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
-              >
-                <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-lg">
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    placeholder="blur"
-                    blurDataURL={BLUR_DATA_URL}
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <span className="text-xs font-medium uppercase tracking-widest text-brand-orange">
-                    {post.category}
-                  </span>
-                  <h3 className="mt-1 font-display text-base font-semibold text-brand-blue">
-                    {post.title}
-                  </h3>
-                  <p className="mt-1 text-xs text-brand-muted">
-                    {post.date} &middot; {post.readTime}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {insightPosts.length === 0 ? (
+            <p className="mt-8 text-sm text-brand-muted">
+              No articles published yet — check back soon.
+            </p>
+          ) : (
+            <div className="mt-8 space-y-6">
+              {insightPosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="flex items-center gap-4 rounded-xl bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
+                >
+                  <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-lg">
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      placeholder="blur"
+                      blurDataURL={BLUR_DATA_URL}
+                      className="object-cover"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-xs font-medium uppercase tracking-widest text-brand-orange">
+                      {post.category}
+                    </span>
+                    <h3 className="mt-1 font-display text-base font-semibold text-brand-blue">
+                      {post.title}
+                    </h3>
+                    <p className="mt-1 text-xs text-brand-muted">
+                      {post.date} &middot; {post.readTime}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </motion.div>
 
         <motion.div

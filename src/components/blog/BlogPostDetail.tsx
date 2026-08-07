@@ -60,6 +60,14 @@ export function BlogPostDetail({ post }: BlogPostDetailProps) {
             {post.excerpt}
           </motion.p>
 
+          {post.content && (
+            <motion.div
+              variants={fadeUp}
+              className="prose prose-slate mt-8 max-w-none text-base leading-relaxed text-brand-muted prose-headings:font-display prose-headings:text-brand-blue prose-a:text-brand-blue"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+          )}
+
           {post.highlights && (
             <motion.ol variants={staggerContainer} className="mt-8 space-y-6">
               {post.highlights.map((highlight) => (

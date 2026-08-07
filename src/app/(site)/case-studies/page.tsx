@@ -1,13 +1,17 @@
 import { CaseStudiesHero } from "@/components/case-studies/CaseStudiesHero";
 import { CaseStudiesList } from "@/components/case-studies/CaseStudiesList";
 import { CTABanner } from "@/components/ui/CTABanner";
-import { CASE_STUDIES } from "@/lib/case-studies";
+import { getCaseStudies } from "@/lib/case-studies";
 
-export default function CaseStudiesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CaseStudiesPage() {
+  const caseStudies = await getCaseStudies();
+
   return (
     <main>
       <CaseStudiesHero />
-      <CaseStudiesList caseStudies={CASE_STUDIES} />
+      <CaseStudiesList caseStudies={caseStudies} />
       <CTABanner
         heading="Ready to be our next success story?"
         subtext="Let's build something amazing together and drive measurable growth for your business."

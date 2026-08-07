@@ -4,10 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { BLUR_DATA_URL } from "@/lib/utils";
-import { CASE_STUDIES } from "@/lib/case-studies";
+import type { CaseStudy } from "@/lib/case-studies";
 import { fadeUp, staggerContainer } from "@/styles/animations";
 
-export function CaseStudiesPreview() {
+interface CaseStudiesPreviewProps {
+  caseStudies: CaseStudy[];
+}
+
+export function CaseStudiesPreview({ caseStudies }: CaseStudiesPreviewProps) {
   return (
     <section id="case-studies-preview" className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -21,6 +25,11 @@ export function CaseStudiesPreview() {
           Recent Success Stories
         </motion.h2>
 
+        {caseStudies.length === 0 ? (
+          <p className="mt-12 text-center text-sm text-brand-muted">
+            No success stories published yet — check back soon.
+          </p>
+        ) : (
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -28,7 +37,7 @@ export function CaseStudiesPreview() {
           variants={staggerContainer}
           className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2"
         >
-          {CASE_STUDIES.map((caseStudy) => (
+          {caseStudies.map((caseStudy) => (
             <motion.div
               key={caseStudy.slug}
               variants={fadeUp}
@@ -66,6 +75,7 @@ export function CaseStudiesPreview() {
             </motion.div>
           ))}
         </motion.div>
+        )}
       </div>
     </section>
   );

@@ -1,6 +1,10 @@
-export const PORTFOLIO_FILTERS = ["All", "Branding", "Software", "Digital Marketing", "Web Design"] as const;
+import { createContentStore } from "@/lib/server/content-store";
+import { PORTFOLIO_FILTERS, type PortfolioCategory } from "@/lib/portfolio-constants";
 
-export type PortfolioCategory = (typeof PORTFOLIO_FILTERS)[number];
+export { PORTFOLIO_FILTERS };
+export type { PortfolioCategory };
+
+export type PortfolioStatus = "draft" | "published";
 
 export interface PortfolioProject {
   slug: string;
@@ -9,55 +13,46 @@ export interface PortfolioProject {
   category: Exclude<PortfolioCategory, "All">;
   description: string;
   image: string;
+  status: PortfolioStatus;
+  seoTitle?: string;
+  seoDescription?: string;
 }
 
-export const PORTFOLIO_PROJECTS: PortfolioProject[] = [
-  {
-    slug: "odeumu-digital-storefront",
-    name: "Odeumu Digital Storefront",
-    client: "Odeumu",
-    category: "Web Design",
-    description: "A custom e-commerce storefront designed for speed, clarity, and higher conversions.",
-    image: "/images/portfolio/odeumu-digital-storefront.jpg",
-  },
-  {
-    slug: "greenmart-brand-refresh",
-    name: "GreenMart Brand Refresh",
-    client: "GreenMart",
-    category: "Branding",
-    description: "A full visual identity overhaul that gave GreenMart a confident, modern presence.",
-    image: "/images/portfolio/greenmart-brand-refresh.jpg",
-  },
-  {
-    slug: "bookeasy-scheduling-app",
-    name: "BookEasy Scheduling App",
-    client: "BookEasy",
-    category: "Software",
-    description: "A custom booking and scheduling platform that automated manual operations.",
-    image: "/images/portfolio/bookeasy-scheduling-app.jpg",
-  },
-  {
-    slug: "poywise-growth-campaign",
-    name: "PoyWise Growth Campaign",
-    client: "PoyWise",
-    category: "Digital Marketing",
-    description: "A multi-channel campaign that grew qualified leads and brand visibility.",
-    image: "/images/portfolio/poywise-growth-campaign.jpg",
-  },
-  {
-    slug: "edubridge-learning-portal",
-    name: "EduBridge Learning Portal",
-    client: "EduBridge",
-    category: "Web Design",
-    description: "A clean, accessible learning portal built to scale with EduBridge's growing student base.",
-    image: "/images/portfolio/edubridge-learning-portal.jpg",
-  },
-  {
-    slug: "playvista-identity-system",
-    name: "Playvista Identity System",
-    client: "Playvista",
-    category: "Branding",
-    description: "A distinct brand identity system spanning logo, color, and messaging guidelines.",
-    image: "/images/portfolio/playvista-identity-system.jpg",
-  },
-];
+const store = createContentStore<PortfolioProject>("portfolio.json", "slug");
+
+/** Published projects only — for public site pages. */
+export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
+  const projects = await store.getAll();
+  return projects.filter((project) => project.status === "published");
+}
+
+export async function getPortfolioProjectBySlug(slug: string): Promise<PortfolioProject | undefined> {
+  const project = await store.getByKey(slug);
+  return project?.status === "published" ? project : undefined;
+}
+
+/** All projects regardless of status — for the admin dashboard only. */
+export async function getAllPortfolioProjectsForAdmin(): Promise<PortfolioProject[]> {
+  return store.getAll();
+}
+
+export async function getPortfolioProjectBySlugForAdmin(
+  slug: string
+): Promise<PortfolioProject | undefined> {
+  return store.getByKey(slug);
+}
+
+export async function createPortfolioProject(project: PortfolioProject): Promise<PortfolioProject> {
+  return store.create(project);
+}
+
+export async function updatePortfolioProject(
+  slug: string,
+  updates: Partial<PortfolioProject>
+): Promise<PortfolioProject> {
+  return store.update(slug, updates);
+}
+
+export async function deletePortfolioProject(slug: string): Promise<void> {
+  return store.remove(slug);
+}

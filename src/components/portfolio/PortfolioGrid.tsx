@@ -5,18 +5,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { BLUR_DATA_URL, cn } from "@/lib/utils";
-import { PORTFOLIO_FILTERS, PORTFOLIO_PROJECTS, type PortfolioCategory } from "@/lib/portfolio";
+import { PORTFOLIO_FILTERS, type PortfolioCategory } from "@/lib/portfolio-constants";
+import type { PortfolioProject } from "@/lib/portfolio";
 import { fadeUp } from "@/styles/animations";
 
-export function PortfolioGrid() {
+interface PortfolioGridProps {
+  projects: PortfolioProject[];
+}
+
+export function PortfolioGrid({ projects }: PortfolioGridProps) {
   const [activeFilter, setActiveFilter] = useState<PortfolioCategory>("All");
 
   const filteredProjects = useMemo(
     () =>
       activeFilter === "All"
-        ? PORTFOLIO_PROJECTS
-        : PORTFOLIO_PROJECTS.filter((project) => project.category === activeFilter),
-    [activeFilter]
+        ? projects
+        : projects.filter((project) => project.category === activeFilter),
+    [activeFilter, projects]
   );
 
   return (

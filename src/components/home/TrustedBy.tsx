@@ -10,22 +10,30 @@ interface PartnerLogo {
 }
 
 const PARTNER_LOGOS: PartnerLogo[] = [
-  { name: "Paystack", file: "paystack" },
-  { name: "Clinicore", file: "clinicore" },
-  { name: "Kuda", file: "kuda" },
-  { name: "Lidya", file: "lidya" },
-  { name: "Flutterwave", file: "flutterwave" },
-  { name: "OPay", file: "opay" },
+  { name: "Raising New Voices", file: "raising-logo" },
+  { name: "Odeumu Digital Hub", file: "odeomu-logo" },
+  { name: "UKCDMA", file: "ukcdma-logo" },
+  { name: "BifaLabs", file: "bifalab-logo" },
+  { name: "Delivar", file: "delivar-logo" },
+  { name: "Akidon", file: "akidon-logo" },
+  { name: "Finosell", file: "finosell" },
+  { name: "Sweet Finance", file: "sweetfinance" },
+  { name: "Fifth Alley", file: "fifthalley" },
+  { name: "The Dev Republic", file: "devrepublic-logo" },
+  { name: "Moses Transport", file: "mosestransport-logo" },
+  { name: "BAfrikart", file: "afromart-logo" },
+  { name: "HandyPros", file: "handypros-logo" },
+  { name: "Appmosphere", file: "appmosphere-logo" },
 ];
 
 function PartnerLogoImage({ name, file }: PartnerLogo) {
   return (
     <Image
-      src={`/images/partners/${file}.svg`}
+      src={`/images/partners/${file}.png`}
       alt={`${name} logo`}
       width={120}
-      height={32}
-      className="h-7 w-auto shrink-0 object-contain opacity-80 grayscale"
+      height={40}
+      className="h-8 w-auto shrink-0 object-contain opacity-80 grayscale"
     />
   );
 }
@@ -44,17 +52,11 @@ export function TrustedBy() {
           Trusted by Startups, SMEs &amp; Growing Brands
         </motion.p>
 
-        <div className="mt-8 hidden items-center justify-between gap-10 lg:flex">
-          {PARTNER_LOGOS.map((partner) => (
-            <PartnerLogoImage key={partner.name} {...partner} />
-          ))}
-        </div>
-
-        <div className="mt-8 overflow-hidden lg:hidden">
+        <div className="mt-8 overflow-hidden">
           <motion.div
-            className="flex items-center gap-10"
+            className="flex items-center gap-12"
             animate={{ x: ["0%", "-50%"] }}
-            transition={{ duration: 18, ease: "linear", repeat: Infinity }}
+            transition={{ duration: 32, ease: "linear", repeat: Infinity }}
           >
             {[...PARTNER_LOGOS, ...PARTNER_LOGOS].map((partner, index) => (
               <PartnerLogoImage key={`${partner.name}-${index}`} {...partner} />

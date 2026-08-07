@@ -1,0 +1,62 @@
+[
+  {
+    "id": "david-a-odeumu",
+    "quote": "Topnotch Tech transformed our brand and helped our online sales in just 6 months. Their team is incredible.",
+    "name": "David A.",
+    "role": "Founder, Odeumu",
+    "avatar": "/images/team/testimonial-david.jpg",
+    "placements": [
+      "home"
+    ]
+  },
+  {
+    "id": "chinwe-o",
+    "quote": "The software they built streamlined our operations completely. Communication was smooth and results were amazing.",
+    "name": "Chinwe O.",
+    "role": "Operations Manager",
+    "avatar": "/images/team/testimonial-chinwe.jpg",
+    "placements": [
+      "home"
+    ]
+  },
+  {
+    "id": "samuel-t-playvista",
+    "quote": "Our new brand identity elevated our entire business. Customers immediately noticed the difference.",
+    "name": "Samuel T.",
+    "role": "CEO, Playvista",
+    "avatar": "/images/team/testimonial-samuel.jpg",
+    "placements": [
+      "home"
+    ]
+  },
+  {
+    "id": "adetola-adeyemi-greenmart",
+    "quote": "Topnotch Tech helped us build a stunning website that increased our conversions by 300%.",
+    "name": "Adetola Adeyemi",
+    "role": "CEO, GreenMart",
+    "avatar": "/images/team/testimonial-adetola.jpg",
+    "placements": [
+      "contact"
+    ]
+  },
+  {
+    "id": "james-okafor-poywise",
+    "quote": "Their team is professional, responsive, and truly understands business goals.",
+    "name": "James Okafor",
+    "role": "Founder, PoyWise",
+    "avatar": "/images/team/testimonial-james.jpg",
+    "placements": [
+      "contact"
+    ]
+  },
+  {
+    "id": "chioma-nwosu-edubridge",
+    "quote": "From branding to development, they delivered beyond our expectations.",
+    "name": "Chioma Nwosu",
+    "role": "MD, EduBridge",
+    "avatar": "/images/team/testimonial-chioma.jpg",
+    "placements": [
+      "contact"
+    ]
+  }
+]

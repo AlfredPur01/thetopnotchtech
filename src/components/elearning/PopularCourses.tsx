@@ -28,33 +28,39 @@ export function PopularCourses() {
           </Link>
         </div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={staggerContainer}
-          className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5"
-        >
-          {FEATURED_COURSES.map((course) => {
-            const instructor = getInstructorBySlug(course.instructorSlug);
-            if (!instructor) return null;
+        {FEATURED_COURSES.length === 0 ? (
+          <p className="mt-10 text-sm text-brand-muted">
+            No courses published yet — check back soon.
+          </p>
+        ) : (
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5"
+          >
+            {FEATURED_COURSES.map((course) => {
+              const instructor = getInstructorBySlug(course.instructorSlug);
+              if (!instructor) return null;
 
-            return (
-              <CourseCard
-                key={course.slug}
-                badge={course.badge}
-                image={course.image}
-                title={course.title}
-                description={course.description}
-                instructor={instructor.name}
-                instructorAvatar={instructor.avatar}
-                rating={course.rating}
-                reviews={course.reviews}
-                price={course.price}
-              />
-            );
-          })}
-        </motion.div>
+              return (
+                <CourseCard
+                  key={course.slug}
+                  badge={course.badge}
+                  image={course.image}
+                  title={course.title}
+                  description={course.description}
+                  instructor={instructor.name}
+                  instructorAvatar={instructor.avatar}
+                  rating={course.rating}
+                  reviews={course.reviews}
+                  price={course.price}
+                />
+              );
+            })}
+          </motion.div>
+        )}
       </div>
     </section>
   );

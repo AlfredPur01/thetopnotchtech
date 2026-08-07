@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { getPriceRange } from "@/lib/courses";
+import { COURSES, getPriceRange } from "@/lib/courses";
 import { fadeUp, staggerContainer } from "@/styles/animations";
 
 function formatNaira(value: number): string {
@@ -31,8 +31,10 @@ export function PricingHero() {
 
           <motion.p variants={fadeUp} className="mx-auto mt-6 max-w-xl text-base text-brand-muted">
             No subscriptions, no hidden fees. Pay once for a course and keep access for as
-            long as you need it. Courses range from {formatNaira(min)} to {formatNaira(max)}
-            depending on depth and length.
+            long as you need it.{" "}
+            {COURSES.length > 0
+              ? `Courses range from ${formatNaira(min)} to ${formatNaira(max)} depending on depth and length.`
+              : "Course pricing will be published soon."}
           </motion.p>
         </motion.div>
       </div>

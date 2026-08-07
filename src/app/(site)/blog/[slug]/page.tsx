@@ -1,23 +1,24 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { BlogPostDetail } from "@/components/blog/BlogPostDetail";
-import { BLOG_POSTS, getBlogPostBySlug } from "@/lib/blog";
+import { getBlogPostBySlug } from "@/lib/blog";
 
 interface BlogPostPageProps {
   params: { slug: string };
 }
 
-export function generateStaticParams() {
-  return BLOG_POSTS.map((post) => ({ slug: post.slug }));
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const post = await getBlogPostBySlug(params.slug);
+  return {
+    title: post ? `${post.seoTitle ?? post.title} | Topnotch Tech Blog` : "Blog Post",
+    description: post?.seoDescription ?? post?.excerpt,
+  };
 }
 
-export function generateMetadata({ params }: BlogPostPageProps): Metadata {
-  const post = getBlogPostBySlug(params.slug);
-  return { title: post ? `${post.title} | Topnotch Tech Blog` : "Blog Post" };
-}
-
-export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = getBlogPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const post = await getBlogPostBySlug(params.slug);
 
   if (!post) {
     notFound();

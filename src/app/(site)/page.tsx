@@ -8,33 +8,12 @@ import { StatsBanner } from "@/components/home/StatsBanner";
 import { CaseStudiesPreview } from "@/components/home/CaseStudiesPreview";
 import { TeamPreview } from "@/components/home/TeamPreview";
 import { LatestInsights } from "@/components/home/LatestInsights";
-import { TestimonialsGrid, type Testimonial } from "@/components/ui/TestimonialsGrid";
+import { TestimonialsGrid } from "@/components/ui/TestimonialsGrid";
 import { FAQAccordion, type FAQItem } from "@/components/ui/FAQAccordion";
 import { CTABanner } from "@/components/ui/CTABanner";
-
-const HOME_TESTIMONIALS: Testimonial[] = [
-  {
-    quote:
-      "Topnotch Tech transformed our brand and helped our online sales in just 6 months. Their team is incredible.",
-    name: "David A.",
-    role: "Founder, Odeumu",
-    avatar: "/images/team/testimonial-david.jpg",
-  },
-  {
-    quote:
-      "The software they built streamlined our operations completely. Communication was smooth and results were amazing.",
-    name: "Chinwe O.",
-    role: "Operations Manager",
-    avatar: "/images/team/testimonial-chinwe.jpg",
-  },
-  {
-    quote:
-      "Our new brand identity elevated our entire business. Customers immediately noticed the difference.",
-    name: "Samuel T.",
-    role: "CEO, Playvista",
-    avatar: "/images/team/testimonial-samuel.jpg",
-  },
-];
+import { getCaseStudies } from "@/lib/case-studies";
+import { getBlogPosts } from "@/lib/blog";
+import { getTestimonialsByPlacement } from "@/lib/testimonials";
 
 const HOME_FAQ_ITEMS: FAQItem[] = [
   {
@@ -64,7 +43,15 @@ const HOME_FAQ_ITEMS: FAQItem[] = [
   },
 ];
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const [caseStudies, blogPosts, testimonials] = await Promise.all([
+    getCaseStudies(),
+    getBlogPosts(),
+    getTestimonialsByPlacement("home"),
+  ]);
+
   return (
     <main>
       <HeroSection />
@@ -74,10 +61,10 @@ export default function HomePage() {
       <OurProcess />
       <Industries />
       <StatsBanner />
-      <CaseStudiesPreview />
-      <TestimonialsGrid id="testimonials" heading="What Our Clients Say" testimonials={HOME_TESTIMONIALS} />
+      <CaseStudiesPreview caseStudies={caseStudies} />
+      <TestimonialsGrid id="testimonials" heading="What Our Clients Say" testimonials={testimonials} />
       <TeamPreview />
-      <LatestInsights />
+      <LatestInsights posts={blogPosts} />
       <FAQAccordion id="faq" heading="Frequently Asked Questions" items={HOME_FAQ_ITEMS} />
       <CTABanner
         heading="Ready To Grow Your Business?"

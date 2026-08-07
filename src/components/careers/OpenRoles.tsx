@@ -13,32 +13,7 @@ interface OpenRole {
   description: string;
 }
 
-const OPEN_ROLES: OpenRole[] = [
-  {
-    title: "Frontend Developer",
-    department: "Engineering",
-    type: "Full-time",
-    location: "Remote (Nigeria)",
-    description:
-      "Build fast, accessible interfaces for our clients and our own products using React and Next.js.",
-  },
-  {
-    title: "Brand Designer",
-    department: "Design",
-    type: "Contract",
-    location: "Remote",
-    description:
-      "Craft logos, visual identities, and brand guidelines that help our clients stand out.",
-  },
-  {
-    title: "Digital Marketing Specialist",
-    department: "Marketing",
-    type: "Full-time",
-    location: "Lagos, Nigeria",
-    description:
-      "Plan and run paid and organic campaigns that drive measurable growth for our clients.",
-  },
-];
+const OPEN_ROLES: OpenRole[] = [];
 
 const TYPE_BADGE_STYLES: Record<OpenRole["type"], string> = {
   "Full-time": "bg-brand-blue/10 text-brand-blue",
@@ -65,6 +40,11 @@ export function OpenRoles() {
           Open Roles
         </motion.h2>
 
+        {OPEN_ROLES.length === 0 ? (
+          <p className="mt-12 text-center text-sm text-brand-muted">
+            No open roles right now — check back soon or send us an open application below.
+          </p>
+        ) : (
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -108,6 +88,7 @@ export function OpenRoles() {
             </motion.div>
           ))}
         </motion.div>
+        )}
       </div>
     </section>
   );

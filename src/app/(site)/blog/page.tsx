@@ -4,18 +4,14 @@ import { FeaturedArticle } from "@/components/blog/FeaturedArticle";
 import { ArticleCard } from "@/components/blog/ArticleCard";
 import { BlogSidebar } from "@/components/blog/BlogSidebar";
 import { BlogNewsletterBanner } from "@/components/blog/BlogNewsletterBanner";
-import { BLOG_POSTS } from "@/lib/blog";
+import { getBlogPosts } from "@/lib/blog";
 
-const LATEST_ARTICLE_SLUGS = [
-  "how-to-build-a-scalable-software-product-from-scratch",
-  "branding-essentials-for-startups-what-really-matters",
-  "seo-for-small-businesses-simple-techniques-that-work",
-  "why-every-business-needs-a-strong-digital-footprint",
-];
+export const dynamic = "force-dynamic";
 
-export default function BlogPage() {
-  const featuredPost = BLOG_POSTS.find((post) => post.featured);
-  const latestArticles = BLOG_POSTS.filter((post) => LATEST_ARTICLE_SLUGS.includes(post.slug));
+export default async function BlogPage() {
+  const posts = await getBlogPosts();
+  const featuredPost = posts.find((post) => post.featured);
+  const latestArticles = posts.filter((post) => post.slug !== featuredPost?.slug).slice(0, 4);
 
   return (
     <main>
@@ -29,20 +25,26 @@ export default function BlogPage() {
             <h2 className="font-display text-2xl font-semibold text-brand-blue sm:text-3xl">
               Latest Articles
             </h2>
-            <div className="mt-8 space-y-6">
-              {latestArticles.map((post) => (
-                <ArticleCard
-                  key={post.slug}
-                  slug={post.slug}
-                  image={post.image}
-                  category={post.category}
-                  title={post.title}
-                  excerpt={post.excerpt}
-                  date={post.date}
-                  readTime={post.readTime}
-                />
-              ))}
-            </div>
+            {latestArticles.length === 0 ? (
+              <p className="mt-8 text-sm text-brand-muted">
+                No articles published yet — check back soon.
+              </p>
+            ) : (
+              <div className="mt-8 space-y-6">
+                {latestArticles.map((post) => (
+                  <ArticleCard
+                    key={post.slug}
+                    slug={post.slug}
+                    image={post.image}
+                    category={post.category}
+                    title={post.title}
+                    excerpt={post.excerpt}
+                    date={post.date}
+                    readTime={post.readTime}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           <BlogSidebar />

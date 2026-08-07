@@ -11,6 +11,11 @@ export function InstructorsGrid() {
   return (
     <section id="instructors-grid" className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {INSTRUCTORS.length === 0 ? (
+          <p className="text-center text-sm text-brand-muted">
+            No instructors published yet — check back soon.
+          </p>
+        ) : (
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -50,6 +55,7 @@ export function InstructorsGrid() {
             );
           })}
         </motion.div>
+        )}
       </div>
     </section>
   );
