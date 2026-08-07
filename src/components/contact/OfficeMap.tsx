@@ -19,7 +19,7 @@ export function OfficeMap() {
           className="relative aspect-[16/10] overflow-hidden rounded-2xl"
         >
           <Image
-            src="/images/about/office-map.jpg"
+            src="/images/about/office-map.png"
             alt="Map showing Topnotch Tech's office location in Osogbo, Osun State"
             fill
             placeholder="blur"
