@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { backendFetch, BackendError } from "@/lib/server/backend-client";
 
 interface ContactRequestBody {
   fullName: string;
@@ -33,22 +34,22 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: "Invalid inquiry submission." }, { status: 400 });
   }
 
-  if (process.env.RESEND_API_KEY) {
-    await fetch("https://api.resend.com/emails", {
+  // The backend's contact_submissions table only has name/email/phone/subject/message —
+  // fold the service/budget/timeline picks into the message body.
+  try {
+    await backendFetch("/contact", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({
-        from: "Topnotch Tech <inquiries@topnotchtech.com>",
-        to: "info@topnotchtech.com",
-        subject: `New project inquiry from ${body.fullName}`,
-        text: `${body.fullName} (${body.email}, ${body.countryCode}${body.phoneNumber}) is interested in: ${body.services.join(", ")}. Budget: ${body.budget}. Timeline: ${body.timeline}.\n\n${body.message}`,
+        name: body.fullName,
+        email: body.email,
+        phone: `${body.countryCode}${body.phoneNumber}`,
+        subject: `Project inquiry: ${body.services.join(", ")}`.slice(0, 255),
+        message: `Budget: ${body.budget}\nTimeline: ${body.timeline}\n\n${body.message}`,
       }),
     });
-  } else {
-    console.log("New contact inquiry:", body);
+  } catch (error) {
+    const status = error instanceof BackendError ? error.status : 502;
+    return NextResponse.json({ error: "Failed to send inquiry. Please try again." }, { status });
   }
 
   return NextResponse.json({ success: true });

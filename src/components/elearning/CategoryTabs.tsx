@@ -3,8 +3,12 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { BarChart3, Briefcase, Code2, Megaphone, Monitor, Palette, type LucideIcon } from "lucide-react";
-import { COURSE_CATEGORIES, getCourseCountByCategory, type CourseCategory } from "@/lib/courses";
+import { COURSE_CATEGORIES, getCourseCountByCategory, type Course, type CourseCategory } from "@/lib/courses";
 import { fadeUp, staggerContainer } from "@/styles/animations";
+
+interface CategoryTabsProps {
+  courses: Course[];
+}
 
 const CATEGORY_ICONS: Record<CourseCategory, LucideIcon> = {
   Development: Code2,
@@ -15,7 +19,7 @@ const CATEGORY_ICONS: Record<CourseCategory, LucideIcon> = {
   "IT & Software": Monitor,
 };
 
-export function CategoryTabs() {
+export function CategoryTabs({ courses }: CategoryTabsProps) {
   return (
     <section id="browse-by-category" className="bg-white py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -49,7 +53,7 @@ export function CategoryTabs() {
                   </span>
                   <p className="font-display text-sm font-semibold text-brand-blue">{category}</p>
                   <p className="text-xs text-brand-muted">
-                    {getCourseCountByCategory(category)} Courses
+                    {getCourseCountByCategory(courses, category)} Courses
                   </p>
                 </Link>
               </motion.div>

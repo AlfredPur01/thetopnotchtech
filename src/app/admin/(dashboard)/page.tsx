@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { FileText, Briefcase, FolderKanban, Quote, Plus } from "lucide-react";
+import { FileText, Briefcase, FolderKanban, Quote, GraduationCap, Plus } from "lucide-react";
 import { getAllBlogPostsForAdmin } from "@/lib/blog";
 import { getAllCaseStudiesForAdmin } from "@/lib/case-studies";
 import { getAllPortfolioProjectsForAdmin } from "@/lib/portfolio";
 import { getAllTestimonials } from "@/lib/testimonials";
+import { getAllCoursesForAdmin } from "@/lib/courses";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +16,12 @@ function countByStatus<T extends { status: string }>(items: T[]) {
 }
 
 export default async function AdminOverviewPage() {
-  const [blogPosts, caseStudies, portfolioProjects, testimonials] = await Promise.all([
+  const [blogPosts, caseStudies, portfolioProjects, testimonials, courses] = await Promise.all([
     getAllBlogPostsForAdmin(),
     getAllCaseStudiesForAdmin(),
     getAllPortfolioProjectsForAdmin(),
     getAllTestimonials(),
+    getAllCoursesForAdmin(),
   ]);
 
   const cards = [
@@ -55,6 +57,14 @@ export default async function AdminOverviewPage() {
       draft: 0,
       href: "/admin/testimonials",
       newHref: "/admin/testimonials/new",
+    },
+    {
+      label: "Courses",
+      icon: GraduationCap,
+      total: courses.length,
+      ...countByStatus(courses),
+      href: "/admin/courses",
+      newHref: "/admin/courses/new",
     },
   ];
 

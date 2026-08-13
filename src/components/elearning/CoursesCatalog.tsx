@@ -5,10 +5,13 @@ import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { COURSE_CATEGORIES, COURSES, type CourseCategory } from "@/lib/courses";
-import { getInstructorBySlug } from "@/lib/instructors";
+import { COURSE_CATEGORIES, type Course, type CourseCategory } from "@/lib/courses";
 import { CourseCard } from "@/components/elearning/CourseCard";
 import { fadeUp } from "@/styles/animations";
+
+interface CoursesCatalogProps {
+  courses: Course[];
+}
 
 type CatalogFilter = "All" | CourseCategory;
 
@@ -16,7 +19,7 @@ function isCourseCategory(value: string | null): value is CourseCategory {
   return COURSE_CATEGORIES.includes(value as CourseCategory);
 }
 
-export function CoursesCatalog() {
+export function CoursesCatalog({ courses }: CoursesCatalogProps) {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category");
 
@@ -26,12 +29,12 @@ export function CoursesCatalog() {
   const [query, setQuery] = useState("");
 
   const filteredCourses = useMemo(() => {
-    return COURSES.filter((course) => {
+    return courses.filter((course) => {
       const matchesCategory = activeFilter === "All" || course.category === activeFilter;
       const matchesQuery = course.title.toLowerCase().includes(query.trim().toLowerCase());
       return matchesCategory && matchesQuery;
     });
-  }, [activeFilter, query]);
+  }, [courses, activeFilter, query]);
 
   return (
     <section id="courses-catalog" className="bg-white py-12 md:py-16">
@@ -78,9 +81,6 @@ export function CoursesCatalog() {
         <div className="relative mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <AnimatePresence mode="popLayout">
             {filteredCourses.map((course) => {
-              const instructor = getInstructorBySlug(course.instructorSlug);
-              if (!instructor) return null;
-
               return (
                 <motion.div
                   key={course.slug}
@@ -92,14 +92,12 @@ export function CoursesCatalog() {
                   transition={{ duration: 0.3 }}
                 >
                   <CourseCard
-                    badge={course.badge}
+                    slug={course.slug}
                     image={course.image}
                     title={course.title}
                     description={course.description}
-                    instructor={instructor.name}
-                    instructorAvatar={instructor.avatar}
-                    rating={course.rating}
-                    reviews={course.reviews}
+                    instructor={course.instructor.name}
+                    instructorAvatar={course.instructor.avatar}
                     price={course.price}
                   />
                 </motion.div>

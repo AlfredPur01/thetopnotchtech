@@ -6,14 +6,19 @@ import { TestimonialStatsBanner } from "@/components/elearning/TestimonialStatsB
 import { ReadyToTransformBanner } from "@/components/elearning/ReadyToTransformBanner";
 import { HowItWorks } from "@/components/elearning/HowItWorks";
 import { CTABanner } from "@/components/ui/CTABanner";
+import { getCourses } from "@/lib/courses";
 
-export default function ELearningPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ELearningPage() {
+  const courses = await getCourses();
+
   return (
     <main>
       <ELearningHero />
-      <PopularCourses />
+      <PopularCourses courses={courses} />
       <WhyLearnWithUs />
-      <CategoryTabs />
+      <CategoryTabs courses={courses} />
       <TestimonialStatsBanner />
       <ReadyToTransformBanner />
       <HowItWorks />

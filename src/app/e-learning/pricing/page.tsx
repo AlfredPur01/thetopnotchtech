@@ -2,6 +2,9 @@ import { PricingHero } from "@/components/elearning/PricingHero";
 import { PricingOverview } from "@/components/elearning/PricingOverview";
 import { FAQAccordion, type FAQItem } from "@/components/ui/FAQAccordion";
 import { CTABanner } from "@/components/ui/CTABanner";
+import { getCourses } from "@/lib/courses";
+
+export const dynamic = "force-dynamic";
 
 const PRICING_FAQ: FAQItem[] = [
   {
@@ -25,10 +28,12 @@ const PRICING_FAQ: FAQItem[] = [
   },
 ];
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const courses = await getCourses();
+
   return (
     <main>
-      <PricingHero />
+      <PricingHero courses={courses} />
       <PricingOverview />
       <FAQAccordion id="pricing-faq" heading="Pricing Questions" items={PRICING_FAQ} />
       <CTABanner

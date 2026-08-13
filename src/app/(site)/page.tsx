@@ -14,6 +14,7 @@ import { CTABanner } from "@/components/ui/CTABanner";
 import { getCaseStudies } from "@/lib/case-studies";
 import { getBlogPosts } from "@/lib/blog";
 import { getTestimonialsByPlacement } from "@/lib/testimonials";
+import { getTeamMembers } from "@/lib/team";
 
 const HOME_FAQ_ITEMS: FAQItem[] = [
   {
@@ -46,10 +47,11 @@ const HOME_FAQ_ITEMS: FAQItem[] = [
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [caseStudies, blogPosts, testimonials] = await Promise.all([
+  const [caseStudies, blogPosts, testimonials, teamMembers] = await Promise.all([
     getCaseStudies(),
     getBlogPosts(),
     getTestimonialsByPlacement("home"),
+    getTeamMembers(),
   ]);
 
   return (
@@ -63,7 +65,7 @@ export default async function HomePage() {
       <StatsBanner />
       <CaseStudiesPreview caseStudies={caseStudies} />
       <TestimonialsGrid id="testimonials" heading="What Our Clients Say" testimonials={testimonials} />
-      <TeamPreview />
+      <TeamPreview members={teamMembers} />
       <LatestInsights posts={blogPosts} />
       <FAQAccordion id="faq" heading="Frequently Asked Questions" items={HOME_FAQ_ITEMS} />
       <CTABanner

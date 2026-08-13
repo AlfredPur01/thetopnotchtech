@@ -3,13 +3,18 @@ import { CoreValues } from "@/components/about/CoreValues";
 import { TeamGrid } from "@/components/about/TeamGrid";
 import { WhyChooseUs } from "@/components/about/WhyChooseUs";
 import { CTABanner } from "@/components/ui/CTABanner";
+import { getTeamMembers } from "@/lib/team";
 
-export default function AboutPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AboutPage() {
+  const members = await getTeamMembers();
+
   return (
     <main>
       <AboutHero />
       <CoreValues />
-      <TeamGrid />
+      <TeamGrid members={members} />
       <WhyChooseUs />
       <CTABanner
         heading="Ready to elevate your business?"

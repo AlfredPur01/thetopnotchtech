@@ -1,4 +1,4 @@
-import { createContentStore } from "@/lib/server/content-store";
+import { backendFetch } from "@/lib/server/backend-client";
 import { PORTFOLIO_FILTERS, type PortfolioCategory } from "@/lib/portfolio-constants";
 
 export { PORTFOLIO_FILTERS };
@@ -18,41 +18,108 @@ export interface PortfolioProject {
   seoDescription?: string;
 }
 
-const store = createContentStore<PortfolioProject>("portfolio.json", "slug");
+interface BackendPortfolioProject {
+  id: string;
+  slug: string;
+  name: string;
+  client: string;
+  category: Exclude<PortfolioCategory, "All">;
+  description: string;
+  image: string | null;
+  status: PortfolioStatus;
+  seo_title: string | null;
+  seo_description: string | null;
+}
+
+function fromBackend(row: BackendPortfolioProject): PortfolioProject {
+  return {
+    slug: row.slug,
+    name: row.name,
+    client: row.client,
+    category: row.category,
+    description: row.description,
+    image: row.image ?? "",
+    status: row.status,
+    seoTitle: row.seo_title ?? undefined,
+    seoDescription: row.seo_description ?? undefined,
+  };
+}
+
+function toBackendPayload(project: Partial<PortfolioProject>) {
+  return {
+    ...(project.slug !== undefined && { slug: project.slug }),
+    ...(project.name !== undefined && { name: project.name }),
+    ...(project.client !== undefined && { client: project.client }),
+    ...(project.category !== undefined && { category: project.category }),
+    ...(project.description !== undefined && { description: project.description }),
+    ...(project.image !== undefined && project.image && { image: project.image }),
+    ...(project.status !== undefined && { status: project.status }),
+    ...(project.seoTitle !== undefined && { seo_title: project.seoTitle }),
+    ...(project.seoDescription !== undefined && { seo_description: project.seoDescription }),
+  };
+}
+
+async function getBackendProjectBySlug(slug: string): Promise<BackendPortfolioProject | undefined> {
+  try {
+    return await backendFetch<BackendPortfolioProject>(`/portfolio/${slug}`);
+  } catch {
+    return undefined;
+  }
+}
 
 /** Published projects only — for public site pages. */
 export async function getPortfolioProjects(): Promise<PortfolioProject[]> {
-  const projects = await store.getAll();
-  return projects.filter((project) => project.status === "published");
+  const { projects } = await backendFetch<{ projects: BackendPortfolioProject[] }>(
+    "/portfolio?status=published&limit=50"
+  );
+  return projects.map(fromBackend);
 }
 
 export async function getPortfolioProjectBySlug(slug: string): Promise<PortfolioProject | undefined> {
-  const project = await store.getByKey(slug);
-  return project?.status === "published" ? project : undefined;
+  const row = await getBackendProjectBySlug(slug);
+  return row && row.status === "published" ? fromBackend(row) : undefined;
 }
 
 /** All projects regardless of status — for the admin dashboard only. */
 export async function getAllPortfolioProjectsForAdmin(): Promise<PortfolioProject[]> {
-  return store.getAll();
+  const { projects } = await backendFetch<{ projects: BackendPortfolioProject[] }>("/portfolio?limit=50");
+  return projects.map(fromBackend);
 }
 
-export async function getPortfolioProjectBySlugForAdmin(
-  slug: string
-): Promise<PortfolioProject | undefined> {
-  return store.getByKey(slug);
+export async function getPortfolioProjectBySlugForAdmin(slug: string): Promise<PortfolioProject | undefined> {
+  const row = await getBackendProjectBySlug(slug);
+  return row ? fromBackend(row) : undefined;
 }
 
 export async function createPortfolioProject(project: PortfolioProject): Promise<PortfolioProject> {
-  return store.create(project);
+  const created = await backendFetch<BackendPortfolioProject>("/portfolio", {
+    method: "POST",
+    auth: true,
+    body: JSON.stringify(toBackendPayload(project)),
+  });
+  return fromBackend(created);
 }
 
 export async function updatePortfolioProject(
   slug: string,
   updates: Partial<PortfolioProject>
 ): Promise<PortfolioProject> {
-  return store.update(slug, updates);
+  const existing = await getBackendProjectBySlug(slug);
+  if (!existing) {
+    throw new Error(`Item with slug "${slug}" not found`);
+  }
+
+  const updated = await backendFetch<BackendPortfolioProject>(`/portfolio/${existing.id}`, {
+    method: "PATCH",
+    auth: true,
+    body: JSON.stringify(toBackendPayload(updates)),
+  });
+  return fromBackend(updated);
 }
 
 export async function deletePortfolioProject(slug: string): Promise<void> {
-  return store.remove(slug);
+  const existing = await getBackendProjectBySlug(slug);
+  if (!existing) return;
+
+  await backendFetch(`/portfolio/${existing.id}`, { method: "DELETE", auth: true });
 }

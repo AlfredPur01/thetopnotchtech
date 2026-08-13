@@ -3,13 +3,16 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { CourseCard } from "@/components/elearning/CourseCard";
-import { COURSES } from "@/lib/courses";
-import { getInstructorBySlug } from "@/lib/instructors";
+import type { Course } from "@/lib/courses";
 import { fadeUp, staggerContainer } from "@/styles/animations";
 
-const FEATURED_COURSES = COURSES.filter((course) => course.featured);
+interface PopularCoursesProps {
+  courses: Course[];
+}
 
-export function PopularCourses() {
+export function PopularCourses({ courses }: PopularCoursesProps) {
+  const featured = courses.slice(0, 5);
+
   return (
     <section id="popular-courses" className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -28,7 +31,7 @@ export function PopularCourses() {
           </Link>
         </div>
 
-        {FEATURED_COURSES.length === 0 ? (
+        {featured.length === 0 ? (
           <p className="mt-10 text-sm text-brand-muted">
             No courses published yet — check back soon.
           </p>
@@ -40,25 +43,18 @@ export function PopularCourses() {
             variants={staggerContainer}
             className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5"
           >
-            {FEATURED_COURSES.map((course) => {
-              const instructor = getInstructorBySlug(course.instructorSlug);
-              if (!instructor) return null;
-
-              return (
-                <CourseCard
-                  key={course.slug}
-                  badge={course.badge}
-                  image={course.image}
-                  title={course.title}
-                  description={course.description}
-                  instructor={instructor.name}
-                  instructorAvatar={instructor.avatar}
-                  rating={course.rating}
-                  reviews={course.reviews}
-                  price={course.price}
-                />
-              );
-            })}
+            {featured.map((course) => (
+              <CourseCard
+                key={course.slug}
+                slug={course.slug}
+                image={course.image}
+                title={course.title}
+                description={course.description}
+                instructor={course.instructor.name}
+                instructorAvatar={course.instructor.avatar}
+                price={course.price}
+              />
+            ))}
           </motion.div>
         )}
       </div>

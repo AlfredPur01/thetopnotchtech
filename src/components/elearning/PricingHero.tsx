@@ -1,15 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { COURSES, getPriceRange } from "@/lib/courses";
+import { getPriceRange, type Course } from "@/lib/courses";
 import { fadeUp, staggerContainer } from "@/styles/animations";
+
+interface PricingHeroProps {
+  courses: Course[];
+}
 
 function formatNaira(value: number): string {
   return `₦${value.toLocaleString("en-NG")}`;
 }
 
-export function PricingHero() {
-  const { min, max } = getPriceRange();
+export function PricingHero({ courses }: PricingHeroProps) {
+  const { min, max } = getPriceRange(courses);
 
   return (
     <section id="pricing-hero" className="bg-white pt-12 pb-12 md:pb-16">
@@ -32,7 +36,7 @@ export function PricingHero() {
           <motion.p variants={fadeUp} className="mx-auto mt-6 max-w-xl text-base text-brand-muted">
             No subscriptions, no hidden fees. Pay once for a course and keep access for as
             long as you need it.{" "}
-            {COURSES.length > 0
+            {courses.length > 0
               ? `Courses range from ${formatNaira(min)} to ${formatNaira(max)} depending on depth and length.`
               : "Course pricing will be published soon."}
           </motion.p>

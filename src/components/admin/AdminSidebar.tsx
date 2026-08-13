@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, FileText, Briefcase, FolderKanban, Quote, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Briefcase, FolderKanban, Quote, GraduationCap, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: "/admin/case-studies", label: "Case Studies", icon: Briefcase },
   { href: "/admin/portfolio", label: "Portfolio", icon: FolderKanban },
   { href: "/admin/testimonials", label: "Testimonials", icon: Quote },
+  { href: "/admin/courses", label: "Courses", icon: GraduationCap },
 ];
 
 export function AdminSidebar() {

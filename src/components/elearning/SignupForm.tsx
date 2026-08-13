@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { CheckCircle2 } from "lucide-react";
 import { fadeUp, staggerContainer } from "@/styles/animations";
 
 interface SignupFormValues {
@@ -16,7 +16,8 @@ interface SignupFormValues {
 }
 
 export function SignupForm() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -24,9 +25,23 @@ export function SignupForm() {
     formState: { errors, isSubmitting },
   } = useForm<SignupFormValues>();
 
-  const onSubmit = async (): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    setIsSubmitted(true);
+  const onSubmit = async (data: SignupFormValues): Promise<void> => {
+    setServerError(null);
+
+    const response = await fetch("/api/elearning/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: data.fullName, email: data.email, password: data.password }),
+    });
+
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as { error?: string } | null;
+      setServerError(body?.error ?? "Sign up failed. Please try again.");
+      return;
+    }
+
+    router.push("/e-learning/dashboard");
+    router.refresh();
   };
 
   return (
@@ -43,27 +58,12 @@ export function SignupForm() {
             Sign up free and start learning today.
           </motion.p>
 
-          {isSubmitted ? (
-            <motion.div
-              variants={fadeUp}
-              className="mt-8 flex items-start gap-3 rounded-xl bg-brand-light p-5"
-            >
-              <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-green-600" />
-              <p className="text-sm text-brand-muted">
-                This is a preview environment, so account sign-up isn&apos;t connected yet.{" "}
-                <Link href="/contact" className="text-brand-blue underline-offset-4 hover:underline">
-                  Contact us
-                </Link>{" "}
-                to get started with a real account.
-              </p>
-            </motion.div>
-          ) : (
-            <motion.form
-              variants={fadeUp}
-              onSubmit={handleSubmit(onSubmit)}
-              noValidate
-              className="mt-8 space-y-5"
-            >
+          <motion.form
+            variants={fadeUp}
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            className="mt-8 space-y-5"
+          >
               <div>
                 <label htmlFor="fullName" className="text-sm font-medium text-brand-blue">
                   Full Name
@@ -160,6 +160,8 @@ export function SignupForm() {
                 <p className="text-xs text-red-600">{errors.agreeToTerms.message}</p>
               )}
 
+              {serverError && <p className="text-sm text-red-600">{serverError}</p>}
+
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -168,7 +170,6 @@ export function SignupForm() {
                 {isSubmitting ? "Creating account..." : "Sign Up Free"}
               </button>
             </motion.form>
-          )}
 
           <motion.p variants={fadeUp} className="mt-6 text-center text-sm text-brand-muted">
             Already have an account?{" "}

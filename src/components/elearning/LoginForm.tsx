@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { CheckCircle2 } from "lucide-react";
 import { fadeUp, staggerContainer } from "@/styles/animations";
 
 interface LoginFormValues {
@@ -13,16 +13,33 @@ interface LoginFormValues {
 }
 
 export function LoginForm() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo") || "/e-learning/dashboard";
+  const [serverError, setServerError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>();
 
-  const onSubmit = async (): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    setIsSubmitted(true);
+  const onSubmit = async (data: LoginFormValues): Promise<void> => {
+    setServerError(null);
+
+    const response = await fetch("/api/elearning/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as { error?: string } | null;
+      setServerError(body?.error ?? "Login failed. Please try again.");
+      return;
+    }
+
+    router.push(returnTo);
+    router.refresh();
   };
 
   return (
@@ -39,27 +56,12 @@ export function LoginForm() {
             Log in to continue your learning journey.
           </motion.p>
 
-          {isSubmitted ? (
-            <motion.div
-              variants={fadeUp}
-              className="mt-8 flex items-start gap-3 rounded-xl bg-brand-light p-5"
-            >
-              <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-green-600" />
-              <p className="text-sm text-brand-muted">
-                This is a preview environment, so account login isn&apos;t connected yet.{" "}
-                <Link href="/contact" className="text-brand-blue underline-offset-4 hover:underline">
-                  Contact us
-                </Link>{" "}
-                to get started with a real account.
-              </p>
-            </motion.div>
-          ) : (
-            <motion.form
-              variants={fadeUp}
-              onSubmit={handleSubmit(onSubmit)}
-              noValidate
-              className="mt-8 space-y-5"
-            >
+          <motion.form
+            variants={fadeUp}
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            className="mt-8 space-y-5"
+          >
               <div>
                 <label htmlFor="email" className="text-sm font-medium text-brand-blue">
                   Email Address
@@ -101,6 +103,8 @@ export function LoginForm() {
                 </Link>
               </div>
 
+              {serverError && <p className="text-sm text-red-600">{serverError}</p>}
+
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -109,7 +113,6 @@ export function LoginForm() {
                 {isSubmitting ? "Logging in..." : "Log In"}
               </button>
             </motion.form>
-          )}
 
           <motion.p variants={fadeUp} className="mt-6 text-center text-sm text-brand-muted">
             Don&apos;t have an account?{" "}

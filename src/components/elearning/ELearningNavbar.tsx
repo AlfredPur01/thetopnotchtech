@@ -14,6 +14,10 @@ interface NavLink {
   label: string;
 }
 
+interface ELearningNavbarProps {
+  studentName?: string | null;
+}
+
 const NAV_LINKS: NavLink[] = [
   { href: "/e-learning", label: "Home" },
   { href: "/e-learning/courses", label: "Courses" },
@@ -23,9 +27,10 @@ const NAV_LINKS: NavLink[] = [
   { href: "/e-learning/about", label: "About Us" },
 ];
 
-export function ELearningNavbar() {
+export function ELearningNavbar({ studentName }: ELearningNavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const isLoggedIn = Boolean(studentName);
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
@@ -73,18 +78,29 @@ export function ELearningNavbar() {
         </ul>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link
-            href="/e-learning/login"
-            className="rounded-md border border-brand-blue px-5 py-2.5 font-medium text-brand-blue transition-colors duration-200 hover:bg-brand-blue hover:text-white"
-          >
-            Log In
-          </Link>
-          <Link
-            href="/e-learning/signup"
-            className="rounded-md bg-brand-orange px-5 py-2.5 font-medium text-white transition-colors duration-200 hover:bg-orange-600"
-          >
-            Sign Up Free
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/e-learning/dashboard"
+              className="rounded-md bg-brand-orange px-5 py-2.5 font-medium text-white transition-colors duration-200 hover:bg-orange-600"
+            >
+              My Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/e-learning/login"
+                className="rounded-md border border-brand-blue px-5 py-2.5 font-medium text-brand-blue transition-colors duration-200 hover:bg-brand-blue hover:text-white"
+              >
+                Log In
+              </Link>
+              <Link
+                href="/e-learning/signup"
+                className="rounded-md bg-brand-orange px-5 py-2.5 font-medium text-white transition-colors duration-200 hover:bg-orange-600"
+              >
+                Sign Up Free
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -120,20 +136,32 @@ export function ELearningNavbar() {
               ))}
             </ul>
             <div className="mt-10 flex flex-col gap-3">
-              <Link
-                href="/e-learning/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="rounded-md border border-brand-blue px-6 py-3 text-center font-medium text-brand-blue"
-              >
-                Log In
-              </Link>
-              <Link
-                href="/e-learning/signup"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="rounded-md bg-brand-orange px-6 py-3 text-center font-medium text-white"
-              >
-                Sign Up Free
-              </Link>
+              {isLoggedIn ? (
+                <Link
+                  href="/e-learning/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="rounded-md bg-brand-orange px-6 py-3 text-center font-medium text-white"
+                >
+                  My Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/e-learning/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="rounded-md border border-brand-blue px-6 py-3 text-center font-medium text-brand-blue"
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    href="/e-learning/signup"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="rounded-md bg-brand-orange px-6 py-3 text-center font-medium text-white"
+                  >
+                    Sign Up Free
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}

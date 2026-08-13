@@ -1,14 +1,17 @@
 import { ELearningNavbar } from "@/components/elearning/ELearningNavbar";
 import { ELearningFooter } from "@/components/elearning/ELearningFooter";
+import { getCurrentStudent } from "@/lib/server/student-auth";
 
 interface ELearningLayoutProps {
   children: React.ReactNode;
 }
 
-export default function ELearningLayout({ children }: ELearningLayoutProps) {
+export default async function ELearningLayout({ children }: ELearningLayoutProps) {
+  const student = await getCurrentStudent();
+
   return (
     <>
-      <ELearningNavbar />
+      <ELearningNavbar studentName={student?.name} />
       {children}
       <ELearningFooter />
     </>
