@@ -71,7 +71,7 @@ export default async function AdminOverviewPage() {
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold text-brand-blue">Dashboard</h1>
-      <p className="mt-1 text-sm text-brand-muted">Overview of your site's content.</p>
+      <p className="mt-1 text-sm text-brand-muted">Overview of your site&apos;s content.</p>
 
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => {

@@ -1,4 +1,4 @@
-const BACKEND_API_URL = process.env.BACKEND_API_URL ?? "http://localhost:5000/api";
+const BACKEND_API_URL = 'https://topnotch-tech-backend-production.up.railway.app/api';
 
 export class BackendError extends Error {
   constructor(
