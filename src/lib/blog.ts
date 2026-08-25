@@ -140,7 +140,7 @@ export async function createBlogPost(post: BlogPost): Promise<BlogPost> {
     method: "POST",
     auth: true,
     body: JSON.stringify(toBackendPayload(post)),
-  });
+  }); 
   return fromBackend(created);
 }
 
