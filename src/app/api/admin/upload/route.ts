@@ -1,11 +1,36 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { NextRequest, NextResponse } from "next/server";
-import { nanoid } from "nanoid";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+const BACKEND_API_URL = process.env.BACKEND_API_URL || "http://localhost:5000/api";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+
+async function getBackendToken() {
+  const email = process.env.BACKEND_ADMIN_EMAIL;
+  const password = process.env.BACKEND_ADMIN_PASSWORD;
+
+  if (!email || !password) {
+    throw new Error("BACKEND_ADMIN_EMAIL and BACKEND_ADMIN_PASSWORD must be configured");
+  }
+
+  const loginRes = await fetch(`${BACKEND_API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!loginRes.ok) {
+    const text = await loginRes.text();
+    throw new Error(`Backend login failed: ${loginRes.status} ${text}`);
+  }
+
+  const data = (await loginRes.json()) as { token?: string };
+
+  if (!data.token) {
+    throw new Error("Backend login response did not include a token");
+  }
+
+  return data.token;
+}
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
@@ -23,28 +48,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "File is larger than 5MB" }, { status: 400 });
   }
 
-  const extension = path.extname(file.name) || `.${file.type.split("/")[1]}`;
-  const fileName = `${nanoid()}${extension}`;
   try {
-    // Ensure upload directory exists and write the file.
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
-    const buffer = Buffer.from(await file.arrayBuffer());
-    await fs.writeFile(path.join(UPLOAD_DIR, fileName), buffer);
+    const token = await getBackendToken();
+    const backendFormData = new FormData();
+    backendFormData.append("file", file, file.name);
 
-    return NextResponse.json({ url: `/uploads/${fileName}` });
-  } catch (err: any) {
-    // Log the error server-side for diagnostics.
-    // In production hosts with read-only filesystems (Vercel, some serverless
-    // platforms), writing to `public/uploads` will fail — return a clear
-    // message so the frontend user sees why uploads don't work.
-    console.error("Upload error:", err);
+    const uploadRes = await fetch(`${BACKEND_API_URL}/media/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: backendFormData,
+    });
 
-    const isReadonlyFs = /EACCES|EPERM|EROFS|read-only file system/i.test(String(err?.code ?? err?.message ?? ""));
+    const payload = await uploadRes.json().catch(() => null);
 
-    if (process.env.NODE_ENV === "production" && isReadonlyFs) {
-      return NextResponse.json({ error: "Server filesystem is read-only in production — configure external uploads (S3) or use the backend to store images)." }, { status: 500 });
+    if (!uploadRes.ok) {
+      return NextResponse.json(
+        { error: payload?.error ?? "Upload failed" },
+        { status: uploadRes.status }
+      );
     }
 
-    return NextResponse.json({ error: "Failed to save uploaded file" }, { status: 500 });
+    return NextResponse.json({ url: payload?.url ?? payload?.secure_url ?? "" });
+  } catch (err: any) {
+    console.error("Upload proxy error:", err);
+    return NextResponse.json(
+      { error: err?.message ?? "Failed to save uploaded file" },
+      { status: 500 }
+    );
   }
 }
